@@ -1,7 +1,12 @@
 import GroupChat from "./Chat";
+import { SocketProvider } from "./context/SocketProvider";
 
 function App() {
-  return <GroupChat />;
+  return (
+    <SocketProvider>
+      <GroupChat />
+    </SocketProvider>
+  );
 }
 
 export default App;

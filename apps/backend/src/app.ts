@@ -6,6 +6,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import * as swaggerUi from "swagger-ui-express";
 import { version } from "../package.json";
 import { addPublicRoutes } from "./api/public";
+import "./features/socket";
 
 const app = express();
 const allowedOrigins = ["http://localhost:8080"];
@@ -42,18 +43,18 @@ const swaggerSpec = swaggerJsdoc(options);
 app.use(
   "/api-docs",
   swaggerUi.serve as any,
-  swaggerUi.setup(swaggerSpec) as any
+  swaggerUi.setup(swaggerSpec) as any,
 );
 
 app.use(
   cors({
     origin: allowedOrigins,
-  })
+  }),
 );
 
 app.use(express.json());
 
-const port = process.env.PORT;
+const port = process.env.PORT ?? 3000;
 
 // **** PUBLIC ****
 addPublicRoutes(app);

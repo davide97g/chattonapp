@@ -1,6 +1,6 @@
 import { IMessage } from "@chattonapp/types";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
 export async function readMessages() {
   return fetch(`${BASE_URL}/chat/messages`, {
@@ -35,4 +35,13 @@ export async function readMessage(id: number, user: string) {
       "Content-Type": "application/json",
     },
   }).then((res) => res.json() as Promise<IMessage>);
+}
+
+export async function clearChatHistory() {
+  return fetch(`${BASE_URL}/chat/clear`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json() as Promise<{ success: boolean }>);
 }
