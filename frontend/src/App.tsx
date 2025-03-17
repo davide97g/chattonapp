@@ -1,12 +1,7 @@
-import './App.css';
+import GroupChat from "./Chat";
 
-const App = () => {
-  return (
-    <div className="content">
-      <h1>Rsbuild with React</h1>
-      <p>Start building amazing things with Rsbuild.</p>
-    </div>
-  );
-};
+function App() {
+  return <GroupChat />;
+}
 
 export default App;
