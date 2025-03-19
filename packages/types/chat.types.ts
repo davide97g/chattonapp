@@ -9,4 +9,6 @@ export type IMessage = {
   sender: string;
   timestamp: number;
   info?: IMessageInfo;
+  readBy?: string[]; // user id list
+  read: boolean;
 };

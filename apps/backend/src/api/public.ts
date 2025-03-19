@@ -1,6 +1,7 @@
 import { type Express, type Request, type Response } from "express";
 
 import { version } from "../../package.json";
+import { createAuthController } from "./controllers/auth.controller";
 import { createChatController } from "./controllers/chat.controller";
 
 const isDevelopment = process.env.MODE === "DEVELOPMENT";
@@ -11,4 +12,5 @@ export const addPublicRoutes = (app: Express) => {
   });
 
   createChatController(app);
+  createAuthController(app);
 };

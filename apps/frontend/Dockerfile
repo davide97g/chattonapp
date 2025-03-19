@@ -12,6 +12,11 @@ COPY . .
 
 RUN npm run build
 
-CMD ["npx", "serve", "-s", "apps/frontend/build"]
+# Install a lightweight static file server
+RUN npm install -g serve
 
+# Expose the port Vite preview typically runs on
 EXPOSE 8080
+
+# Serve the built project
+CMD ["serve", "-s", "dist", "-l", "8080"]

@@ -1,4 +1,11 @@
 export interface IUser {
   id: string;
-  name: string;
+  username: string;
+  password: string;
+}
+
+export interface IUserChat {
+  id: string;
+  username: string;
+  lastReadTime: number; // timestamp
 }

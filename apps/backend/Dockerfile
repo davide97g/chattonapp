@@ -6,7 +6,7 @@ COPY package.json yarn.lock turbo.json ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/types/package.json packages/types/
 
-RUN npm install # Or `pnpm install` if using pnpm
+RUN npm install
 
 COPY . .
 

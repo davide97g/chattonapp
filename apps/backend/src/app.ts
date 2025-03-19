@@ -8,7 +8,12 @@ import { version } from "../package.json";
 import { addPublicRoutes } from "./api/public";
 import "./features/socket";
 
+import bodyParser from "body-parser";
+
 const app = express();
+
+app.use(bodyParser.json());
+
 const allowedOrigins = ["http://localhost:8080"];
 
 const options = {

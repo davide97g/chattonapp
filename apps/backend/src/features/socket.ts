@@ -10,8 +10,12 @@ socket.on("connection", (ws) => {
   console.log("Client connected");
 
   ws.on("message", (message) => {
-    console.log(`Received message => ${message}`);
-    ws.send(`Received message: ${message}`);
+    const socketMessage = JSON.parse(message.toString()) as ISocketMessage;
+    if (socketMessage.event === "typing") {
+      broadcast(socketMessage);
+      return;
+    }
+    ws.send(`Received message: ${message.toString()}`);
   });
 
   ws.on("close", () => {
