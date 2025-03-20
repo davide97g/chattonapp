@@ -1,10 +1,10 @@
 import { IMessage, IUser, IUserChat } from "@chattonapp/types";
 import { readdirSync, readFileSync, writeFile } from "fs";
 
-const DATA_PATH = "../../data";
+const DATA_PATH = process.env.DATA_PATH ?? "../../data";
 
 // if the data folder does not exist, create it
-if (!readdirSync("..").includes("data")) {
+if (!readdirSync(DATA_PATH).includes("data")) {
   writeFile(DATA_PATH, "", () => {});
 }
 

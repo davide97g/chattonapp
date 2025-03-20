@@ -6,17 +6,16 @@ COPY package.json yarn.lock turbo.json ./
 COPY apps/frontend/package.json apps/frontend/
 COPY packages/types/package.json packages/types/
 
-RUN npm install # Or `pnpm install` if using pnpm
+RUN yarn
 
 COPY . .
 
-RUN npm run build
-
-# Install a lightweight static file server
-RUN npm install -g serve
+RUN yarn build
 
 # Expose the port Vite preview typically runs on
 EXPOSE 8080
 
+RUN yarn add serve -W --dev
+
 # Serve the built project
-CMD ["serve", "-s", "dist", "-l", "8080"]
+CMD ["serve", "-s", "apps/frontend/dist", "-l", "8080"]

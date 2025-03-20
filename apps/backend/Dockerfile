@@ -2,14 +2,19 @@ FROM node:20
 
 WORKDIR /app
 
+# Copy only the package manager files to leverage caching
 COPY package.json yarn.lock turbo.json ./
 COPY apps/backend/package.json apps/backend/
 COPY packages/types/package.json packages/types/
 
-RUN npm install
+# Install dependencies for all workspaces
+RUN yarn
 
+# Copy all project files
 COPY . .
 
-CMD ["node", "apps/backend/dist/src/app.js"]
+# Build the project (if needed)
+RUN cd apps/backend && yarn build
 
-EXPOSE 3000
+# Run the server
+CMD ["node", "apps/backend/dist/src/app.js"]

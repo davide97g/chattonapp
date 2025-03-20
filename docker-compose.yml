@@ -12,6 +12,10 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=production
+      - PORT=3000
+      - DATA_PATH=/app/data
+    depends_on:
+      - frontend
 
   frontend:
     build:
@@ -24,3 +28,4 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=production
+      - VITE_SERVER_URL=http://localhost:3000
