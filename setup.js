@@ -13,7 +13,10 @@ const chatPath = join(dataPath, "chat.json");
 if (!existsSync(frontendEnv)) {
   console.error(`File ${frontendEnv} does not exist. Creating it...`);
   // create the file with default values
-  writeFileSync(frontendEnv, "VITE_SERVER_URL=http://localhost:3000");
+  writeFileSync(
+    frontendEnv,
+    "VITE_SERVER_URL=http://localhost:3000\nVITE_WS_SERVER_URL=ws://localhost:3001"
+  );
 }
 if (!existsSync(backendEnv)) {
   console.error(`File ${backendEnv} does not exist. Creating it...`);

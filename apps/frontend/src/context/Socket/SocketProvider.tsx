@@ -4,6 +4,8 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../Auth/useAuth";
 import { SocketContext } from "./socket.context";
 
+const { VITE_WS_SERVER_URL } = import.meta.env;
+
 export function SocketProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
@@ -82,7 +84,7 @@ export function SocketProvider({
     if (!token) socket?.close();
     if (!socket) {
       console.info("Creating new WebSocket connection");
-      setSocket(new WebSocket(`ws://localhost:3001?token=${token}`));
+      setSocket(new WebSocket(`${VITE_WS_SERVER_URL}?token=${token}`));
       return;
     }
     startSocketConnection();
