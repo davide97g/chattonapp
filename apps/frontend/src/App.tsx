@@ -1,11 +1,14 @@
 import GroupChat from "./Chat";
-import { SocketProvider } from "./context/SocketProvider";
+import { AuthProvider } from "./context/Auth/AuthProvider";
+import { SocketProvider } from "./context/Socket/SocketProvider";
 
 function App() {
   return (
-    <SocketProvider>
-      <GroupChat />
-    </SocketProvider>
+    <AuthProvider>
+      <SocketProvider>
+        <GroupChat />
+      </SocketProvider>
+    </AuthProvider>
   );
 }
 

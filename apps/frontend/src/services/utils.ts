@@ -7,12 +7,12 @@ export const formatTime = (timestamp: number) => {
 };
 
 // Get initials for avatar fallback
-export const getInitials = (name: string) => {
-  return name.charAt(0);
+export const getInitials = (name?: string) => {
+  return name?.charAt(0);
 };
 
 // Get a consistent color based on username
-export const getUserColor = (name: string) => {
+export const getUserColor = (name?: string) => {
   const colors = [
     "bg-red-500",
     "bg-blue-500",
@@ -26,8 +26,8 @@ export const getUserColor = (name: string) => {
 
   // Simple hash function to get a consistent index
   let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < (name?.length ?? 0); i++) {
+    hash = (name?.charCodeAt(i) ?? -1) + ((hash << 5) - hash);
   }
 
   return colors[Math.abs(hash) % colors.length];
@@ -63,4 +63,40 @@ export const generateUsername = () => {
   const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
 
   return `${randomAdjective}${randomNoun}`;
+};
+
+// Common emojis for the shortcut list
+export const commonEmojis = [
+  "😊",
+  "😂",
+  "❤️",
+  "👍",
+  "😍",
+  "🎉",
+  "🔥",
+  "👏",
+  "😎",
+  "🙌",
+  "✨",
+  "🤔",
+  "😢",
+  "😭",
+  "🥰",
+  "😘",
+  "🤣",
+  "😁",
+  "👋",
+  "🙏",
+  "💯",
+  "⭐",
+  "🌟",
+  "💪",
+];
+
+// Check if a string contains only emojis
+export const isEmojiOnly = (str: string) => {
+  // This regex matches most common emoji patterns
+  const emojiRegex =
+    /^(\p{Emoji_Presentation}|\p{Extended_Pictographic}|\p{Emoji}\uFE0F|[\u{1F3FB}-\u{1F3FF}]|\p{Emoji}\u200D\p{Emoji})+$/u;
+  return emojiRegex.test(str.trim());
 };

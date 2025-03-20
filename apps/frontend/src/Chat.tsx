@@ -11,96 +11,27 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./components/ui/dialog";
-import { Label } from "./components/ui/label";
 import { Separator } from "./components/ui/separator";
-import { useSocket } from "./context/SocketProvider";
+
+import { useAuth } from "./context/Auth/useAuth";
+import { useSocket } from "./context/Socket/useSocket";
+import { clearChatHistory, sendMessage } from "./services/api";
 import {
-  clearChatHistory,
-  getMessages,
-  getUserInfo,
-  loginUser,
-  registerUser,
-  sendMessage,
-} from "./services/api";
-import { formatTime, getInitials, getUserColor } from "./services/utils";
-
-// Common emojis for the shortcut list
-const commonEmojis = [
-  "😊",
-  "😂",
-  "❤️",
-  "👍",
-  "😍",
-  "🎉",
-  "🔥",
-  "👏",
-  "😎",
-  "🙌",
-  "✨",
-  "🤔",
-  "😢",
-  "😭",
-  "🥰",
-  "😘",
-  "🤣",
-  "😁",
-  "👋",
-  "🙏",
-  "💯",
-  "⭐",
-  "🌟",
-  "💪",
-];
-
-// Check if a string contains only emojis
-const isEmojiOnly = (str: string) => {
-  // This regex matches most common emoji patterns
-  const emojiRegex =
-    /^(\p{Emoji_Presentation}|\p{Extended_Pictographic}|\p{Emoji}\uFE0F|[\u{1F3FB}-\u{1F3FF}]|\p{Emoji}\u200D\p{Emoji})+$/u;
-  return emojiRegex.test(str.trim());
-};
+  commonEmojis,
+  formatTime,
+  getInitials,
+  getUserColor,
+  isEmojiOnly,
+} from "./services/utils";
 
 export default function GroupChat() {
-  // State for username modal
-  const [isUsernameModalOpen, setIsUsernameModalOpen] = useState(false);
-  const [usernameInput, setUsernameInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState<string>("");
-  const [usernameError, setUsernameError] = useState("");
-  // Get or create username from localStorage
-  const [username, setUsername] = useState<string>("");
-  const {
-    messages,
-    setMessages,
-    token,
-    logout,
-    onUserTyping,
-    typingUsernameList,
-  } = useSocket();
+  const { token, user, logout } = useAuth();
+  const { messages, setMessages, onUserTyping, typingUsernameList } =
+    useSocket();
   const [input, setInput] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const usernameInputRef = useRef<HTMLInputElement>(null);
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-
-  // Check for username on initial load
-  useEffect(() => {
-    if (!token) setIsUsernameModalOpen(true);
-    else
-      getUserInfo({ token }).then((res) => {
-        const { user } = res;
-        setUsername(user.username);
-      });
-  }, [token]);
-
   // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -116,10 +47,10 @@ export default function GroupChat() {
   // Handle sending a new message
   const handleSendMessage = () => {
     if (input.trim() === "") return;
-    if (token)
+    if (token && user?.username)
       sendMessage({
         message: input,
-        sender: username,
+        sender: user.username,
         token,
       }).finally(() => setInput(""));
   };
@@ -132,30 +63,6 @@ export default function GroupChat() {
     if (confirmClear) {
       if (token) clearChatHistory({ token });
     }
-  };
-
-  // Handle username submission
-  const handleLogin = () => {
-    loginUser({
-      username: usernameInput,
-      password: passwordInput,
-    }).then((res) => {
-      const { token } = res;
-      localStorage.setItem("chattonapp-token", token);
-      setIsUsernameModalOpen(false);
-      setUsername(usernameInput);
-      getMessages({ token }).then((res) => {
-        setMessages(res);
-      });
-    });
-  };
-
-  const handleUserRegistration = () => {
-    // Handle user registration
-    registerUser({
-      username: usernameInput,
-      password: passwordInput,
-    });
   };
 
   const lastMessageRef = useRef(null);
@@ -175,6 +82,7 @@ export default function GroupChat() {
 
     return () => {
       if (lastMessageRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(lastMessageRef.current);
       }
     };
@@ -185,12 +93,6 @@ export default function GroupChat() {
 
     if (isVisible && hasUnreadMessages) {
       console.log("Last message is visible");
-      // if (token)
-      //   updateLastReadTime({ token }).then(() =>
-      //     getMessages({ token }).then((res) => {
-      //       setMessages(res);
-      //     })
-      //   );
     }
   }, [isVisible, messages, setMessages, token]);
 
@@ -215,67 +117,6 @@ export default function GroupChat() {
 
   return (
     <>
-      {/* Username Modal */}
-      <Dialog
-        open={isUsernameModalOpen}
-        onOpenChange={(open) => {
-          // Prevent closing the dialog if no username is set
-          if (!open && !username) {
-            return;
-          }
-          setIsUsernameModalOpen(open);
-        }}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Enter your username</DialogTitle>
-            <DialogDescription>
-              Choose a username to identify yourself in the chat.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <div className="col-span-3">
-                <Input
-                  id="username"
-                  ref={usernameInputRef}
-                  value={usernameInput}
-                  onChange={(e) => {
-                    setUsernameInput(e.target.value);
-                    setUsernameError("");
-                  }}
-                  className={usernameError ? "border-red-500" : ""}
-                />
-                {usernameError && (
-                  <p className="text-red-500 text-sm mt-1">{usernameError}</p>
-                )}
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="password" className="text-right">
-                Password
-              </Label>
-              <div className="col-span-3">
-                <Input
-                  id="password"
-                  ref={passwordInputRef}
-                  value={passwordInput}
-                  onChange={(e) => {
-                    setPasswordInput(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleUserRegistration}>Register</Button>
-            <Button onClick={handleLogin}>Login</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
         <Card className="w-full max-w-3xl">
           <CardHeader className="border-b">
@@ -287,11 +128,11 @@ export default function GroupChat() {
                 </Button>
                 <div className="flex items-center space-x-2">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className={getUserColor(username)}>
-                      {getInitials(username)}
+                    <AvatarFallback className={getUserColor(user?.username)}>
+                      {getInitials(user?.username)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium">{username}</span>
+                  <span className="text-sm font-medium">{user?.username}</span>
                   <Button variant="destructive" size="sm" onClick={logout}>
                     Logout
                   </Button>
@@ -308,7 +149,7 @@ export default function GroupChat() {
                     <div
                       key={message.id}
                       className={`flex ${
-                        message.sender === username
+                        message.sender === user?.username
                           ? "justify-end"
                           : "justify-start"
                       } ${message.sender === "System" ? "justify-center" : ""}`}
@@ -320,7 +161,7 @@ export default function GroupChat() {
                         </div>
                       ) : (
                         <div className="flex items-start max-w-[80%] space-x-2">
-                          {message.sender !== username && (
+                          {message.sender !== user?.username && (
                             <Avatar className="h-8 w-8 mt-1">
                               <AvatarFallback
                                 className={getUserColor(message.sender)}
@@ -330,7 +171,7 @@ export default function GroupChat() {
                             </Avatar>
                           )}
                           <div>
-                            {message.sender !== username && (
+                            {message.sender !== user?.username && (
                               <div className="text-xs text-gray-500 mb-1">
                                 {message.sender}
                               </div>
@@ -338,7 +179,7 @@ export default function GroupChat() {
                             <div className="flex items-end space-x-1">
                               <div
                                 className={`p-3 rounded-lg ${
-                                  message.sender === username
+                                  message.sender === user?.username
                                     ? "bg-primary text-primary-foreground"
                                     : "bg-gray-200 text-gray-800"
                                 }`}
@@ -406,7 +247,7 @@ export default function GroupChat() {
                   className="flex-grow"
                   onKeyDown={(e) => {
                     console.info(e.key);
-                    onUserTyping(username);
+                    if (user?.username) onUserTyping(user?.username);
                     if (e.key === "Enter") {
                       handleSendMessage();
                     }
