@@ -14,7 +14,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const allowedOrigins = ["http://localhost:8080"];
+const allowedOrigins = ["http://localhost:8080", "http://192.168.15.143:8080"];
 
 const options = {
   failOnErrors: true, // Whether or not to throw when parsing errors. Defaults to false.
