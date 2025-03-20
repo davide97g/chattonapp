@@ -7,7 +7,8 @@
     "dev": "vite --open --port 8080",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview --port 8080"
+    "preview": "vite preview --port 8080",
+    "serve": "serve -s dist -l 8080"
   },
   "dependencies": {
     "@chattonapp/types": "*",

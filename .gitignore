@@ -40,3 +40,5 @@ yarn-error.log*
 data/*
 !data/.gitkeep
 !data/README.md
+
+.secrets
