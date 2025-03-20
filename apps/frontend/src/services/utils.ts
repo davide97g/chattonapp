@@ -100,3 +100,9 @@ export const isEmojiOnly = (str: string) => {
     /^(\p{Emoji_Presentation}|\p{Extended_Pictographic}|\p{Emoji}\uFE0F|[\u{1F3FB}-\u{1F3FF}]|\p{Emoji}\u200D\p{Emoji})+$/u;
   return emojiRegex.test(str.trim());
 };
+
+// Truncate text for reply preview
+export const truncateText = (text: string, maxLength = 30) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + "...";
+};

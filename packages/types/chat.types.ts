@@ -11,4 +11,5 @@ export type IMessage = {
   info?: IMessageInfo;
   readBy?: string[]; // user id list
   read: boolean;
+  replyTo?: string; // ID of the message being replied to
 };

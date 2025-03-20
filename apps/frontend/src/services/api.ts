@@ -15,10 +15,12 @@ export async function getMessages({ token }: { token: string }) {
 export async function sendMessage({
   message,
   sender,
+  replyTo,
   token,
 }: {
   message: string;
   sender: string;
+  replyTo?: string;
   token: string;
 }) {
   const res = await fetch(`${BASE_URL}/chat/message`, {
@@ -27,7 +29,7 @@ export async function sendMessage({
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ text: message, sender }),
+    body: JSON.stringify({ text: message, replyTo, sender }),
   });
   return (await res.json()) as IMessage;
 }

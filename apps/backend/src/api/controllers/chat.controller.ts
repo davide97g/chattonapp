@@ -41,6 +41,7 @@ export const createChatController = (app: Express) => {
           timestamp: Date.now(),
           readBy: [(req as any).user.id],
           read: false,
+          replyTo: messageRequest.replyTo,
         };
         chat.messages.push(message);
         updateChatMessagesFile({ chat });

@@ -7,7 +7,7 @@ import { SocketContext } from "./socket.context";
 export function SocketProvider({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [chatInfo, setChatInfo] = useState<{ users: IUserChat[] } | null>(null);
@@ -45,10 +45,12 @@ export function SocketProvider({
           );
 
           setTypingUsernameList((prev) => [
-            ...new Set([
-              ...((prev as string[]) ?? []),
-              socketMessage.sender ?? "",
-            ]),
+            ...new Set(
+              [
+                ...((prev as string[]) ?? []),
+                socketMessage.sender ?? "",
+              ].filter((username) => username !== user?.username)
+            ),
           ]);
           return;
         }
@@ -74,7 +76,7 @@ export function SocketProvider({
     socket.onerror = (error) => {
       console.error("WebSocket error:", error);
     };
-  }, [socket, timer, token]);
+  }, [socket, timer, token, user?.username]);
 
   useEffect(() => {
     if (!token) socket?.close();
