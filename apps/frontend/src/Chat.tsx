@@ -16,14 +16,8 @@ import { Separator } from "./components/ui/separator";
 import { TouchEvent } from "react";
 
 import { IMessage } from "@chattonapp/types";
-import {
-  Copy,
-  ListRestartIcon,
-  MoreHorizontal,
-  Reply,
-  SendIcon,
-  Trash,
-} from "lucide-react";
+import { Copy, MoreHorizontal, Reply, SendIcon, Trash } from "lucide-react";
+import { UserPreferencesModal } from "./components/custom/Profile";
 import { Button } from "./components/ui/button";
 import {
   DropdownMenu,
@@ -33,7 +27,7 @@ import {
 } from "./components/ui/dropdown-menu";
 import { useAuth } from "./context/Auth/useAuth";
 import { useSocket } from "./context/Socket/useSocket";
-import { clearChatHistory, sendMessage } from "./services/api";
+import { sendMessage } from "./services/api";
 import {
   commonEmojis,
   formatTime,
@@ -44,7 +38,7 @@ import {
 } from "./services/utils";
 
 export default function GroupChat() {
-  const { token, user, logout } = useAuth();
+  const { token, user } = useAuth();
   const {
     messages,
     setMessages,
@@ -84,16 +78,6 @@ export default function GroupChat() {
         setInput("");
         setReplyingTo(null);
       });
-  };
-
-  // Clear chat history
-  const clearChat = () => {
-    const confirmClear = window.confirm(
-      "Are you sure you want to clear the chat history?"
-    );
-    if (confirmClear) {
-      if (token) clearChatHistory({ token });
-    }
   };
 
   const lastMessageRef = useRef(null);
@@ -217,19 +201,8 @@ export default function GroupChat() {
             <div className="flex items-center justify-between">
               <CardTitle>Chattonapp</CardTitle>
               <div className="flex items-center space-x-4">
-                <Button size="sm" onClick={clearChat}>
-                  <ListRestartIcon color="black" />
-                </Button>
                 <div className="flex items-center space-x-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className={getUserColor(user?.username)}>
-                      {getInitials(user?.username)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{user?.username}</span>
-                  <Button variant="destructive" size="sm" onClick={logout}>
-                    Logout
-                  </Button>
+                  <UserPreferencesModal />
                 </div>
               </div>
             </div>
@@ -240,7 +213,12 @@ export default function GroupChat() {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex ${message.sender === user?.username ? "justify-end" : "justify-start"} ${message.sender === "System" ? "justify-center" : ""}`}
+                    className={`flex ${message.sender === user?.username ? "justify-end" : "justify-start"}`}
+                    style={{
+                      ...(message.sender === "System" && {
+                        justifyContent: "center",
+                      }),
+                    }}
                   >
                     {message.sender === "System" ? (
                       <div className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
@@ -305,7 +283,14 @@ export default function GroupChat() {
                                   className="p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                                   aria-label="Reply to message"
                                 >
-                                  <Reply className="h-4 w-4 text-gray-600" />
+                                  <Reply
+                                    className="h-4 w-4 text-gray-600"
+                                    style={{
+                                      ...(message.sender === user?.username && {
+                                        transform: "scale(-1, 1)",
+                                      }),
+                                    }}
+                                  />
                                 </button>
 
                                 <DropdownMenu>
@@ -439,7 +424,7 @@ export default function GroupChat() {
                   }}
                 />
                 <Button onClick={handleSendMessage}>
-                  <SendIcon color="black" />
+                  <SendIcon />
                 </Button>
               </div>
               <div className="w-full">

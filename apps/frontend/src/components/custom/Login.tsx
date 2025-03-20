@@ -80,6 +80,7 @@ export function Login() {
             <div className="col-span-3">
               <Input
                 id="password"
+                type="password"
                 ref={passwordInputRef}
                 value={passwordInput}
                 onChange={(e) => {
@@ -90,8 +91,19 @@ export function Login() {
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleUserRegistration}>Register</Button>
-          <Button onClick={handleLogin}>Login</Button>
+          <Button
+            onClick={handleUserRegistration}
+            variant="secondary"
+            disabled={!usernameInput || !passwordInput}
+          >
+            Register
+          </Button>
+          <Button
+            onClick={handleLogin}
+            disabled={!usernameInput || !passwordInput}
+          >
+            Login
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
