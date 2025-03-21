@@ -11,23 +11,23 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useEffect, useRef, useState } from "react";
-import { Separator } from "./components/ui/separator";
+import { Separator } from "../components/ui/separator";
 
 import { TouchEvent } from "react";
 
 import { IMessage } from "@chattonapp/types";
 import { Copy, MoreHorizontal, Reply, SendIcon, Trash } from "lucide-react";
-import { UserPreferencesModal } from "./components/custom/Profile";
-import { Button } from "./components/ui/button";
+import { UserPreferencesModal } from "../components/custom/Profile";
+import { Button } from "../components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./components/ui/dropdown-menu";
-import { useAuth } from "./context/Auth/useAuth";
-import { useSocket } from "./context/Socket/useSocket";
-import { sendMessage } from "./services/api";
+} from "../components/ui/dropdown-menu";
+import { useAuth } from "../context/Auth/useAuth";
+import { useSocket } from "../context/Socket/useSocket";
+import { sendMessage } from "../services/api";
 import {
   commonEmojis,
   formatTime,
@@ -35,7 +35,7 @@ import {
   getUserColor,
   isEmojiOnly,
   truncateText,
-} from "./services/utils";
+} from "../services/utils";
 
 export default function GroupChat() {
   const { token, user } = useAuth();
