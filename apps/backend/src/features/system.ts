@@ -14,9 +14,13 @@ function getCpuUsage() {
 }
 
 async function getCpuTemp() {
-  const { stdout } = await execAsync("vcgencmd measure_temp");
-  // in celsius! OBVIOUSLY!
-  return parseFloat(stdout.replace("temp=", "").replace("'C", ""));
+  try {
+    const { stdout } = await execAsync("vcgencmd measure_temp");
+    // in celsius! OBVIOUSLY!
+    return parseFloat(stdout.replace("temp=", "").replace("'C", ""));
+  } catch (e) {
+    return 0;
+  }
 }
 
 function bytesToGB(bytes: number) {
@@ -35,7 +39,11 @@ export async function getSystemDetails() {
   const cpuTemp = await getCpuTemp();
 
   return {
-    os,
+    os: {
+      hostname: os.hostname(),
+      platform: os.platform(),
+      arch: os.arch(),
+    },
     cpuTemp,
     cpuUsage,
     memoryUsage: {

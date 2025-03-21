@@ -1,4 +1,4 @@
-import { IMessage, IUserChat } from "@chattonapp/types";
+import { IMessage, ISystemStats, IUserChat } from "@chattonapp/types";
 
 const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -109,4 +109,16 @@ export async function getUserInfo({ token }: { token: string }) {
     },
   });
   return res.json();
+}
+
+// *** SYSTEM
+
+export async function getSystemDetails() {
+  const res = await fetch(`${BASE_URL}/system`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
+  return res as ISystemStats;
 }

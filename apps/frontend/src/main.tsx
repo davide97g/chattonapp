@@ -9,12 +9,12 @@ import { router } from "./router/index.ts";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <SocketProvider>
-        <ThemeProvider defaultTheme="light" storageKey="chat-theme">
+    <ThemeProvider defaultTheme="light" storageKey="chat-theme">
+      <AuthProvider>
+        <SocketProvider>
           <RouterProvider router={router} />
-        </ThemeProvider>
-      </SocketProvider>
-    </AuthProvider>
+        </SocketProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>
 );

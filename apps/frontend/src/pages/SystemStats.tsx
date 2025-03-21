@@ -1,24 +1,43 @@
+import { Loader } from "@/components/custom/Loader";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getSystemDetails } from "@/services/system";
+import { getSystemDetails } from "@/services/api";
+import { ISystemStats } from "@chattonapp/types";
+import { ArrowLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
-export default async function SystemStats() {
-  const systemInfo = await getSystemDetails();
+export default function SystemStats() {
+  const navigate = useNavigate();
+  const [systemInfo, setSystemInfo] = useState<ISystemStats | null>(null);
 
+  useEffect(() => {
+    getSystemDetails().then((data) => setSystemInfo(data));
+  }, []);
+
+  if (!systemInfo) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
+  }
   return (
     <main className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Raspberry Pi</h1>
-
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="flex justify-between items-center">
           <CardTitle>System Information</CardTitle>
+          <Button onClick={() => navigate("/")}>
+            <ArrowLeft /> Home
+          </Button>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             {[
-              ["Hostname", systemInfo.os.hostname()],
-              ["Platform", systemInfo.os.platform()],
-              ["Architecture", systemInfo.os.arch()],
+              ["Hostname", systemInfo.os.hostname],
+              ["Platform", systemInfo.os.platform],
+              ["Architecture", systemInfo.os.arch],
               ["CPU Temperature", `${systemInfo.cpuTemp.toFixed(1)}°C`],
             ].map(([label, value]) => (
               <div key={label} className="flex justify-between text-sm">
