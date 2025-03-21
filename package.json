@@ -24,7 +24,6 @@
     "packages/*"
   ],
   "dependencies": {
-    "node-ssh": "^13.2.1",
     "serve": "^14.2.4"
   }
 }
